@@ -23,14 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DataAccess\IRepository\" />
-    <Folder Include="DataAccess\Repository\" />
-    <Folder Include="Models\DTOs\BookDTOs\" />
     <Folder Include="Models\DTOs\AuthorDTOs\" />
     <Folder Include="Models\DTOs\CategoryDTOs\" />
     <Folder Include="Models\DTOs\BundleDTOs\" />
-    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>
