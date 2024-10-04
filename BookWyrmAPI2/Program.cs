@@ -1,5 +1,7 @@
 
 using BookWyrmAPI2.DataAccess;
+using BookWyrmAPI2.DataAccess.IRepository;
+using BookWyrmAPI2.DataAccess.Repository;
 using BookWyrmAPI2.Models.BaseModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +27,7 @@ namespace BookWyrmAPI2
 
             // data access
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
 
             // Configure logging
             builder.Logging.ClearProviders();
@@ -83,12 +86,7 @@ namespace BookWyrmAPI2
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookWyrm API V1");
-                    c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
-                });
-                app.UseDeveloperExceptionPage();
+                app.UseSwaggerUI();
             }
 
             //CORS
