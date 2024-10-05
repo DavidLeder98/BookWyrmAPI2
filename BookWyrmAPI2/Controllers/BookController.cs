@@ -1,6 +1,7 @@
 ﻿using BookWyrmAPI2.DataAccess.IRepository;
 using BookWyrmAPI2.Models.DTOs.BookDTOs;
 using Microsoft.AspNetCore.Mvc;
+using static BookWyrmAPI2.DataAccess.Repository.BookRepository;
 
 namespace BookWyrmAPI2.Controllers
 {
@@ -29,28 +30,45 @@ namespace BookWyrmAPI2.Controllers
             }
         }
 
-        // GET: api/book
-        [HttpGet("listalphabetically")]
-        public async Task<ActionResult<IEnumerable<BookListDto>>> GetBookListAlphabetically()
+        // GET api/book/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BookDetailsDto>> GetBookById(int id)
         {
             try
             {
-                var books = await _bookRepository.GetBookListAlphabeticallyAsync();
-                return Ok(books);
+                var book = await _bookRepository.GetBookByIdAsync(id);
+
+                if (book == null)
+                {
+                    return NotFound(); // Return 404 if the book is not found
+                }
+
+                return Ok(book); // Return 200 with the book details
             }
             catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving books.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving this book.");
             }
+            
         }
 
-        // GET: api/book/cardsbyid
-        [HttpGet("cardsbyid")]
-        public async Task<ActionResult<IEnumerable<BookCardDto>>> GetBookCards()
+        // GET: api/book/getbooks
+        [HttpGet("getbooks")]
+        public async Task<ActionResult<IEnumerable<BookCardDto>>> GetBookCards(string? searchTerm = null, string? sortOrder = null)
         {
             try
             {
-                var books = await _bookRepository.GetBookCardsAsync();
+                // Default to sorting by Id
+                SortBy sortByEnum = SortBy.Id;
+
+                // Try to parse the sortOrder string to the SortBy enum
+                if (!string.IsNullOrEmpty(sortOrder) && Enum.TryParse(sortOrder, true, out SortBy parsedSortBy))
+                {
+                    sortByEnum = parsedSortBy;
+                }
+
+                // Fetch sorted and filtered books from the repository
+                var books = await _bookRepository.GetBookCardsAsync(searchTerm, sortByEnum);
 
                 // Create the base URL using the request's scheme, host, and path
                 var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/uploads/books/";
