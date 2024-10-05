@@ -33,5 +33,13 @@ namespace BookWyrmAPI2.Models.BaseModels
 
         [Url]
         public string? ImageUrl { get; set; }
+
+        // one to many, author to book
+        public int? AuthorId { get; set; }
+        [ForeignKey("AuthorId")]
+        public Author Author { get; set; }
+
+        // many to many with category
+        public ICollection<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
     }
 }
