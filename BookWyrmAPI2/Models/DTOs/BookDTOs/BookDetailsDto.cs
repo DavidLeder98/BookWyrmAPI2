@@ -1,6 +1,7 @@
 ﻿using BookWyrmAPI2.Models.BaseModels;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using BookWyrmAPI2.Models.DTOs.CategoryDTOs;
 
 namespace BookWyrmAPI2.Models.DTOs.BookDTOs
 {
@@ -16,11 +17,10 @@ namespace BookWyrmAPI2.Models.DTOs.BookDTOs
         public string? ImageUrl { get; set; }
 
         // Author properties
-        public int AuthorId { get; set; } // Include AuthorId
-        public string AuthorName { get; set; } // Include AuthorName
+        public int? AuthorId { get; set; }
+        public string? AuthorName { get; set; }
 
         // Categories properties
-        public List<int> CategoryIds { get; set; } = new List<int>(); // List of Category IDs
-        public List<string> CategoryNames { get; set; } = new List<string>(); // List of Category Names
+        public List<CategoryListDto> Categories { get; set; } = new List<CategoryListDto>();
     }
 }
