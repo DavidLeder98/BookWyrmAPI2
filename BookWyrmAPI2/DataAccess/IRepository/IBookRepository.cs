@@ -6,8 +6,11 @@ namespace BookWyrmAPI2.DataAccess.IRepository
 {
     public interface IBookRepository
     {
-        Task<IEnumerable<BookListDto>> GetBookListAsync();
+        Task<IEnumerable<BookListDto>> GetBookListAsync(string? searchTerm);
         Task<IEnumerable<BookCardDto>> GetBookCardsAsync(string? searchTerm, SortBy sortBy);
         Task<BookDetailsDto> GetBookByIdAsync(int id);
+        Task<Book> CreateBookAsync(BookCreateDto bookCreateDto);
+        Task<Book> UpdateBookAsync(BookUpdateDto bookUpdateDto);
+        Task<Book> DeleteBookAsync(int id);
     }
 }
