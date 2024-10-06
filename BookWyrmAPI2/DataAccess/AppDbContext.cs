@@ -15,6 +15,8 @@ namespace BookWyrmAPI2.DataAccess
         public DbSet<Author> Authors { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<BookCategory> BookCategories { get; set; }
+        public DbSet<Bundle> Bundles { get; set; }
+        public DbSet<BookBundle> BookBundles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +29,11 @@ namespace BookWyrmAPI2.DataAccess
             modelBuilder.Entity<BookCategory>().HasKey(bc => new { bc.BookId, bc.CategoryId });
             modelBuilder.Entity<BookCategory>().HasOne(bc => bc.Book).WithMany(b => b.BookCategories).HasForeignKey(bc => bc.BookId);
             modelBuilder.Entity<BookCategory>().HasOne(bc => bc.Category).WithMany(c => c.BookCategories).HasForeignKey(bc => bc.CategoryId);
+
+            // book and bundle
+            modelBuilder.Entity<BookBundle>().HasKey(bb => new { bb.BookId, bb.BundleId });
+            modelBuilder.Entity<BookBundle>().HasOne(bb => bb.Book).WithMany(book => book.BookBundles).HasForeignKey(bb => bb.BookId);
+            modelBuilder.Entity<BookBundle>().HasOne(bb => bb.Bundle).WithMany(bundle => bundle.BookBundles).HasForeignKey(bb => bb.BundleId);
 
             // seed authors
             modelBuilder.Entity<Author>().HasData(
@@ -122,6 +129,26 @@ namespace BookWyrmAPI2.DataAccess
 
                 new BookCategory { BookId = 5, CategoryId = 1 },
                 new BookCategory { BookId = 5, CategoryId = 4 });
+
+            // seed bundles
+            modelBuilder.Entity<Bundle>().HasData(
+                new Category { Id = 1, Name = "Popular" },
+                new Category { Id = 2, Name = "Best Sellers" },
+                new Category { Id = 3, Name = "10% Off" });
+
+            // seed bookbundles
+            modelBuilder.Entity<BookBundle>().HasData(
+                new BookBundle { BookId = 1, BundleId = 2 },
+
+                new BookBundle { BookId = 2, BundleId = 1 },
+                new BookBundle { BookId = 2, BundleId = 3 },
+
+                new BookBundle { BookId = 3, BundleId = 1 },
+                new BookBundle { BookId = 3, BundleId = 3 },
+
+                new BookBundle { BookId = 4, BundleId = 3 },
+
+                new BookBundle { BookId = 5, BundleId = 2 });
         }
     }
 }
