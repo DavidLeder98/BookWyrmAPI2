@@ -1,6 +1,9 @@
 ﻿using BookWyrmAPI2.DataAccess.IRepository;
+using BookWyrmAPI2.DataAccess.Repository;
+using BookWyrmAPI2.Models.BaseModels;
 using BookWyrmAPI2.Models.DTOs.BookDTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using static BookWyrmAPI2.DataAccess.Repository.BookRepository;
 
 namespace BookWyrmAPI2.Controllers
@@ -10,84 +13,59 @@ namespace BookWyrmAPI2.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookRepository _bookRepository;
-        public BookController(IBookRepository bookRepository)
+        private readonly ILogger<AuthorController> _logger;
+        public BookController(IBookRepository bookRepository, ILogger<AuthorController> logger)
         {
             _bookRepository = bookRepository;
+            _logger = logger;
         }
 
-        // GET: api/book
-        [HttpGet("listbyid")]
-        public async Task<ActionResult<IEnumerable<BookListDto>>> GetBookList()
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<BookListDto>>> GetBookList(string? searchTerm)
         {
-            try
-            {
-                var books = await _bookRepository.GetBookListAsync();
-                return Ok(books);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving books.");
-            }
+            var books = await _bookRepository.GetBookListAsync(searchTerm);
+            return Ok(books);
         }
 
-        // GET api/book/{id}
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BookCardDto>>> GetBooks(string? searchTerm, SortBy sortBy = SortBy.Id)
+        {
+            var books = await _bookRepository.GetBookCardsAsync(searchTerm, sortBy);
+            return Ok(books);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDetailsDto>> GetBookById(int id)
         {
-            try
-            {
-                var book = await _bookRepository.GetBookByIdAsync(id);
+            var book = await _bookRepository.GetBookByIdAsync(id);
+            if (book == null) return NotFound();
 
-                if (book == null)
-                {
-                    return NotFound(); // Return 404 if the book is not found
-                }
-
-                return Ok(book); // Return 200 with the book details
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving this book.");
-            }
-            
+            return Ok(book);
         }
 
-        // GET: api/book/getbooks
-        [HttpGet("getbooks")]
-        public async Task<ActionResult<IEnumerable<BookCardDto>>> GetBookCards(string? searchTerm = null, string? sortOrder = null)
+        [HttpPost]
+        public async Task<ActionResult<Book>> CreateBook([FromForm] BookCreateDto bookCreateDto)
         {
-            try
-            {
-                // Default to sorting by Id
-                SortBy sortByEnum = SortBy.Id;
+            var book = await _bookRepository.CreateBookAsync(bookCreateDto);
+            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+        }
 
-                // Try to parse the sortOrder string to the SortBy enum
-                if (!string.IsNullOrEmpty(sortOrder) && Enum.TryParse(sortOrder, true, out SortBy parsedSortBy))
-                {
-                    sortByEnum = parsedSortBy;
-                }
+        [HttpPut]
+        public async Task<ActionResult<Book>> UpdateBook([FromForm] BookUpdateDto bookUpdateDto)
+        {
+            var updatedBook = await _bookRepository.UpdateBookAsync(bookUpdateDto);
+            if (updatedBook == null) return NotFound();
 
-                // Fetch sorted and filtered books from the repository
-                var books = await _bookRepository.GetBookCardsAsync(searchTerm, sortByEnum);
+            return Ok(updatedBook);
+        }
 
-                // Create the base URL using the request's scheme, host, and path
-                var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/uploads/books/";
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Book>> DeleteBook(int id)
+        {
+            var deletedBook = await _bookRepository.DeleteBookAsync(id);
+            if (deletedBook == null) return NotFound();
 
-                // Update the ImageUrl for each book to include the full URL
-                foreach (var book in books)
-                {
-                    if (!string.IsNullOrEmpty(book.ImageUrl))
-                    {
-                        book.ImageUrl = $"{baseUrl}{book.ImageUrl}";
-                    }
-                }
-
-                return Ok(books);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving books.");
-            }
+            return Ok(deletedBook);
         }
     }
 }
