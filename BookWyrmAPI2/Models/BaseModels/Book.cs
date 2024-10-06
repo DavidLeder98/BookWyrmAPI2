@@ -41,5 +41,8 @@ namespace BookWyrmAPI2.Models.BaseModels
 
         // many to many with category
         public ICollection<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
+
+        // Many-to-many with Bundle via BundleBook
+        public ICollection<BookBundle> BookBundles { get; set; } = new List<BookBundle>();
     }
 }
