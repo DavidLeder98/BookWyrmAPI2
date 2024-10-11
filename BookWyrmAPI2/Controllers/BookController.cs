@@ -23,49 +23,91 @@ namespace BookWyrmAPI2.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<BookListDto>>> GetBookList(string? searchTerm)
         {
-            var books = await _bookRepository.GetBookListAsync(searchTerm);
+            try
+            {
+                var books = await _bookRepository.GetBookListAsync(searchTerm);
             return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
-        [HttpGet]
+        [HttpGet("allbooks")]
         public async Task<ActionResult<IEnumerable<BookCardDto>>> GetBooks(string? searchTerm, SortBy sortBy = SortBy.Id)
         {
-            var books = await _bookRepository.GetBookCardsAsync(searchTerm, sortBy);
-            return Ok(books);
+            try
+            {
+                var books = await _bookRepository.GetBookCardsAsync(searchTerm, sortBy);
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDetailsDto>> GetBookById(int id)
         {
-            var book = await _bookRepository.GetBookByIdAsync(id);
-            if (book == null) return NotFound();
+            try
+            {
+                var book = await _bookRepository.GetBookByIdAsync(id);
+                if (book == null) return NotFound();
 
-            return Ok(book);
+                return Ok(book);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook([FromForm] BookCreateDto bookCreateDto)
         {
-            var book = await _bookRepository.CreateBookAsync(bookCreateDto);
-            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+            try
+            {
+                var book = await _bookRepository.CreateBookAsync(bookCreateDto);
+                return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPut]
         public async Task<ActionResult<Book>> UpdateBook([FromForm] BookUpdateDto bookUpdateDto)
         {
-            var updatedBook = await _bookRepository.UpdateBookAsync(bookUpdateDto);
-            if (updatedBook == null) return NotFound();
+            try
+            {
+                var updatedBook = await _bookRepository.UpdateBookAsync(bookUpdateDto);
+                if (updatedBook == null) return NotFound();
 
-            return Ok(updatedBook);
+                return Ok(updatedBook);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Book>> DeleteBook(int id)
         {
-            var deletedBook = await _bookRepository.DeleteBookAsync(id);
-            if (deletedBook == null) return NotFound();
+            try
+            {
+                var deletedBook = await _bookRepository.DeleteBookAsync(id);
+                if (deletedBook == null) return NotFound();
 
-            return Ok(deletedBook);
+                return Ok(deletedBook);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
