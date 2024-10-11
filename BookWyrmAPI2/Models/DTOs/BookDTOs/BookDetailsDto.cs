@@ -14,7 +14,7 @@ namespace BookWyrmAPI2.Models.DTOs.BookDTOs
         public bool BestSeller { get; set; }
         public decimal ListPrice { get; set; }
         public decimal Price { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? LargeImageUrl { get; set; }
 
         // Author properties
         public int? AuthorId { get; set; }

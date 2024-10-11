@@ -33,6 +33,8 @@ namespace BookWyrmAPI2.Models.BaseModels
 
         [Url]
         public string? ImageUrl { get; set; }
+        [Url]
+        public string? LargeImageUrl { get; set; }
 
         // one to many, author to book
         public int? AuthorId { get; set; }
