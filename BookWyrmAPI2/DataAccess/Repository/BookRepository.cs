@@ -44,6 +44,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<IEnumerable<BookCardDto>> GetBookCardsAsync(string? searchTerm, SortBy sortBy)
         {
+            var baseUrl = "https://localhost:7230";
             var query = _context.Books.Include(b => b.Author).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -59,7 +60,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 BestSeller = b.BestSeller,
                 ListPrice = b.ListPrice,
                 Price = b.Price,
-                ImageUrl = b.ImageUrl,
+                ImageUrl = $"{baseUrl}{b.ImageUrl}",
                 AuthorName = b.Author.Name
             }).ToListAsync();
 
@@ -75,6 +76,8 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BookDetailsDto> GetBookByIdAsync(int id)
         {
+            var largeBaseUrl = "https://localhost:7230";
+
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.BookCategories).ThenInclude(bc => bc.Category)
@@ -88,7 +91,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                     BestSeller = b.BestSeller,
                     ListPrice = b.ListPrice,
                     Price = b.Price,
-                    ImageUrl = b.ImageUrl,
+                    LargeImageUrl = $"{largeBaseUrl}{b.LargeImageUrl}",
                     AuthorId = b.AuthorId,
                     AuthorName = b.Author != null ? b.Author.Name : "Unknown",
                     Categories = b.BookCategories.Select(bc => new CategoryListDto

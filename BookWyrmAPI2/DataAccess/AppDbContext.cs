@@ -52,6 +52,7 @@ namespace BookWyrmAPI2.DataAccess
                     Rating = 4.1,
                     BestSeller = true,
                     ImageUrl = "Brew.png",
+                    LargeImageUrl = "LargeBrew.png",
                     ListPrice = 29.99M,
                     Price = 24.99M,
                     AuthorId = 1
@@ -64,6 +65,7 @@ namespace BookWyrmAPI2.DataAccess
                     Rating = 4.8,
                     BestSeller = true,
                     ImageUrl = "Dragon.png",
+                    LargeImageUrl = "LargeDragon.png",
                     ListPrice = 39.99M,
                     Price = 35.99M,
                     AuthorId = 2
@@ -76,6 +78,7 @@ namespace BookWyrmAPI2.DataAccess
                     Rating = 4.4,
                     BestSeller = false,
                     ImageUrl = "Deep.png",
+                    LargeImageUrl = "LargeDeep.png",
                     ListPrice = 29.99M,
                     Price = 27.99M,
                     AuthorId = 3
@@ -88,6 +91,7 @@ namespace BookWyrmAPI2.DataAccess
                     Rating = 4.4,
                     BestSeller = false,
                     ImageUrl = "Abj.png",
+                    LargeImageUrl = "LargeAbj.png",
                     ListPrice = 26.99M,
                     Price = 25.99M,
                     AuthorId = 4
@@ -100,6 +104,7 @@ namespace BookWyrmAPI2.DataAccess
                     Rating = 2.4,
                     BestSeller = false,
                     ImageUrl = "Gold.png",
+                    LargeImageUrl = "LargeGold.png",
                     ListPrice = 72.99M,
                     Price = 69.99M,
                     AuthorId = 1
