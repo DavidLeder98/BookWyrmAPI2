@@ -48,6 +48,22 @@ namespace BookWyrmAPI2.Controllers
             }
         }
 
+        [HttpGet("card/{id}")]
+        public async Task<ActionResult<BookCardDto>> GetBookCardById(int id)
+        {
+            try
+            {
+                var bookCard = await _bookRepository.GetBookCardByIdAsync(id);
+                if (bookCard == null) return NotFound();
+
+                return Ok(bookCard);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDetailsDto>> GetBookById(int id)
         {
@@ -69,8 +85,10 @@ namespace BookWyrmAPI2.Controllers
         {
             try
             {
-                var book = await _bookRepository.CreateBookAsync(bookCreateDto);
-                return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+                var result = await _bookRepository.CreateBookAsync(bookCreateDto);
+
+                // Return the success message without referencing book.Id
+                return Ok(result); // You can return a 200 OK with the success message
             }
             catch (Exception ex)
             {
