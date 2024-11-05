@@ -39,6 +39,8 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<AuthorWithBooksDto> GetAuthorByIdAsync(int id, SortBy sortBy)
         {
+            var baseUrl = "https://localhost:7230";
+
             var author = await _context.Authors
                 .Include(a => a.Books)
                 .Where(a => a.Id == id)
@@ -55,7 +57,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                         BestSeller = b.BestSeller,
                         ListPrice = b.ListPrice,
                         Price = b.Price,
-                        ImageUrl = b.ImageUrl,
+                        ImageUrl = $"{baseUrl}{b.ImageUrl}",
                         AuthorName = a.Name
                     }).ToList()
                 }).FirstOrDefaultAsync();
