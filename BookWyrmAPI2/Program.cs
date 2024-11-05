@@ -3,6 +3,7 @@ using BookWyrmAPI2.DataAccess;
 using BookWyrmAPI2.DataAccess.IRepository;
 using BookWyrmAPI2.DataAccess.Repository;
 using BookWyrmAPI2.Models.BaseModels;
+using BookWyrmAPI2.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace BookWyrmAPI2
 
             // data access
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
@@ -44,6 +46,10 @@ namespace BookWyrmAPI2
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 6;
+
+                // Set user name validation rules
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._";
+                options.User.RequireUniqueEmail = false; // Set to true if you want unique emails
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders(); // Handles cookie authentication
@@ -61,6 +67,9 @@ namespace BookWyrmAPI2
                 options.SlidingExpiration = true;
             });
 
+            // Add custom user validation for username length
+            builder.Services.AddScoped<IUserValidator<AppUser>, CustomUserValidator>();
+
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
                 AddCookie(options => { options.LoginPath = "/account/login"; });
 
@@ -71,12 +80,13 @@ namespace BookWyrmAPI2
             // CORS
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll",
+                options.AddPolicy("AllowFrontend",
                     builder =>
                     {
-                        builder.AllowAnyOrigin()  // Allow any origin
-                               .AllowAnyMethod()  // Allow any method (GET, POST, etc.)
-                               .AllowAnyHeader(); // Allow any header
+                        builder.WithOrigins("http://localhost:5173") // Specify your frontend URL
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials(); // This allows cookies/credentials to be passed
                     });
             });
 
@@ -93,7 +103,7 @@ namespace BookWyrmAPI2
             }
 
             //CORS
-            app.UseCors("AllowAll");
+            app.UseCors("AllowFrontend");
 
             app.UseHttpsRedirection();
 
