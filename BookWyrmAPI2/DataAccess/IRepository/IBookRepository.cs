@@ -8,9 +8,10 @@ namespace BookWyrmAPI2.DataAccess.IRepository
     {
         Task<IEnumerable<BookListDto>> GetBookListAsync(string? searchTerm);
         Task<IEnumerable<BookCardDto>> GetBookCardsAsync(string? searchTerm, SortBy sortBy);
+        Task<BookCardDto> GetBookCardByIdAsync(int id);
         Task<BookDetailsDto> GetBookByIdAsync(int id);
-        Task<Book> CreateBookAsync(BookCreateDto bookCreateDto);
-        Task<Book> UpdateBookAsync(BookUpdateDto bookUpdateDto);
-        Task<Book> DeleteBookAsync(int id);
+        Task<string> CreateBookAsync(BookCreateDto bookCreateDto);
+        Task<string> UpdateBookAsync(BookUpdateDto bookUpdateDto);
+        Task<string> DeleteBookAsync(int id);
     }
 }
