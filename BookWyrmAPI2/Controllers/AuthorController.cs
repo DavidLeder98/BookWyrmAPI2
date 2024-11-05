@@ -43,7 +43,7 @@ namespace BookWyrmAPI2.Controllers
 
         // GET: api/author/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorWithBooksDto>> GetAuthorById(int id, [FromQuery] BookRepository.SortBy sortBy = BookRepository.SortBy.Id)
+        public async Task<ActionResult<AuthorWithBooksDto>> GetAuthorById(int id, [FromQuery] SortBy sortBy = SortBy.Id)
         {
             try
             {
