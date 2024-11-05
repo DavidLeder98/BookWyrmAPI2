@@ -27,6 +27,8 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BundleWithBooksDto> GetBundleByIdAsync(int id)
         {
+            var baseUrl = "https://localhost:7230";
+
             var bundle = await _context.Bundles
                 .Include(b => b.BookBundles)
                 .ThenInclude(bb => bb.Book)
@@ -43,7 +45,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                         BestSeller = bb.Book.BestSeller,
                         ListPrice = bb.Book.ListPrice,
                         Price = bb.Book.Price,
-                        ImageUrl = bb.Book.ImageUrl,
+                        ImageUrl = $"{baseUrl}{bb.Book.ImageUrl}",
                         AuthorName = bb.Book.Author.Name
                     }).ToList()
                 }).FirstOrDefaultAsync();
