@@ -29,6 +29,8 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<CategoryWithBooksDto> GetCategoryByIdAsync(int id, SortBy sortBy)
         {
+            var baseUrl = "https://localhost:7230";
+
             var category = await _context.Categories
                 .Include(c => c.BookCategories)
                 .ThenInclude(bc => bc.Book)
@@ -45,7 +47,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                         BestSeller = bc.Book.BestSeller,
                         ListPrice = bc.Book.ListPrice,
                         Price = bc.Book.Price,
-                        ImageUrl = bc.Book.ImageUrl,
+                        ImageUrl = $"{baseUrl}{bc.Book.ImageUrl}",
                         AuthorName = bc.Book.Author.Name
                     }).ToList()
                 }).FirstOrDefaultAsync();
