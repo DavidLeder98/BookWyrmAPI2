@@ -6,7 +6,7 @@ namespace BookWyrmAPI2.Models.DTOs.CategoryDTOs
     {
         public int Id { get; set; }
         [Required]
-        [StringLength(30), MinLength(1)]
+        [StringLength(20), MinLength(1)]
         public string Name { get; set; }
     }
 }
