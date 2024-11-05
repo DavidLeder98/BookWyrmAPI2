@@ -22,7 +22,8 @@ namespace BookWyrmAPI2.Models.DTOs.BookDTOs
         [Required]
         [Range(1, 10000)]
         public decimal Price { get; set; }
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
+        public IFormFile? LargeImageFile { get; set; }
 
         // Author properties
         public int AuthorId { get; set; }
