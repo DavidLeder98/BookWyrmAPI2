@@ -31,7 +31,7 @@ namespace BookWyrmAPI2.Controllers
             }
         }
 
-        // GET: api/Category/5
+        // GET: api/Category/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id, [FromQuery] BookRepository.SortBy sortBy = BookRepository.SortBy.Id)
         {
@@ -69,7 +69,7 @@ namespace BookWyrmAPI2.Controllers
             }
         }
 
-        // PUT: api/Category/5
+        // PUT: api/Category/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryUpdateDto categoryUpdateDto)
         {
@@ -94,7 +94,7 @@ namespace BookWyrmAPI2.Controllers
             }
         }
 
-        // DELETE: api/Category/5
+        // DELETE: api/Category/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
