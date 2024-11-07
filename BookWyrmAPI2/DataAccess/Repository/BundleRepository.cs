@@ -27,7 +27,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BundleWithBooksDto> GetBundleByIdAsync(int id)
         {
-            var baseUrl = "https://localhost:7230";
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
 
             var bundle = await _context.Bundles
                 .Include(b => b.BookBundles)

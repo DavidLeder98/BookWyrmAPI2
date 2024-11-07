@@ -44,7 +44,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<IEnumerable<BookCardDto>> GetBookCardsAsync(string? searchTerm, SortBy sortBy)
         {
-            var baseUrl = "https://localhost:7230";
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
             var query = _context.Books.Include(b => b.Author).AsQueryable();
 
             // Split the searchTerm into individual words
@@ -87,7 +87,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BookCardDto> GetBookCardByIdAsync(int id)
         {
-            var baseUrl = "https://localhost:7230"; // Ensure this is consistent with your other methods
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net"; // Ensure this is consistent with your other methods
             var book = await _context.Books
                 .Include(b => b.Author) // Include author details
                 .Where(b => b.Id == id)
@@ -109,7 +109,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BookDetailsDto> GetBookByIdAsync(int id)
         {
-            var largeBaseUrl = "https://localhost:7230";
+            var largeBaseUrl = "https://bookwyrmapi2.azurewebsites.net";
 
             var book = await _context.Books
                 .Include(b => b.Author)

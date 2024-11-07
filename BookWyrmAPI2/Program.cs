@@ -81,12 +81,13 @@ namespace BookWyrmAPI2
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontend",
-                    builder =>
+                    corsBuilder =>
                     {
-                        builder.WithOrigins("http://localhost:5173") // Specify your frontend URL
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials(); // This allows cookies/credentials to be passed
+                        // Allow requests from your local front-end
+                        corsBuilder.WithOrigins("http://localhost:5173")  // Allow your local development server to access the API
+                                   .AllowAnyHeader()
+                                   .AllowAnyMethod()
+                                   .AllowCredentials();  // Allow credentials (cookies) if needed
                     });
             });
 
