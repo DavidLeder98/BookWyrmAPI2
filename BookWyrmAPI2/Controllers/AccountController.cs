@@ -11,10 +11,12 @@ namespace BookWyrmAPI2.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly UserManager<AppUser> _userManager;
 
-        public AccountController(IAccountRepository accountRepository)
+        public AccountController(IAccountRepository accountRepository, UserManager<AppUser> userManager)
         {
             _accountRepository = accountRepository;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
@@ -53,7 +55,15 @@ namespace BookWyrmAPI2.Controllers
                 var result = await _accountRepository.LoginAsync(model);
                 if (result.Succeeded)
                 {
-                    return Ok("Login successful");
+                    var user = await _userManager.FindByNameAsync(model.Username); // Assuming you have access to _userManager
+                    var roles = await _userManager.GetRolesAsync(user); // Get user roles
+
+                    // Return a response including the role
+                    return Ok(new
+                    {
+                        Message = "Login successful",
+                        Role = roles.FirstOrDefault() // Get the first role or null if none
+                    });
                 }
 
                 return Unauthorized("Invalid login attempt");
@@ -64,6 +74,7 @@ namespace BookWyrmAPI2.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
