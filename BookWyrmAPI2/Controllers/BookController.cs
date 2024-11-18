@@ -87,8 +87,7 @@ namespace BookWyrmAPI2.Controllers
             {
                 var result = await _bookRepository.CreateBookAsync(bookCreateDto);
 
-                // Return the success message without referencing book.Id
-                return Ok(result); // You can return a 200 OK with the success message
+                return Ok(result);
             }
             catch (Exception ex)
             {

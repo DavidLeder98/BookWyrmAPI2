@@ -29,7 +29,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<CategoryWithBooksDto> GetCategoryByIdAsync(int id, SortBy sortBy)
         {
-            var baseUrl = "https://localhost:7230";
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
 
             var category = await _context.Categories
                 .Include(c => c.BookCategories)
@@ -60,7 +60,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 SortBy.PriceDescending => category.Books.OrderByDescending(b => b.Price).ToList(),
                 SortBy.Title => category.Books.OrderBy(b => b.Title).ToList(),
                 SortBy.Rating => category.Books.OrderByDescending(b => b.Rating).ToList(),
-                _ => category.Books.OrderBy(b => b.Id).ToList() // default sort by Id
+                _ => category.Books.OrderBy(b => b.Id).ToList()
             };
 
             return category;
@@ -105,7 +105,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             var bookCategories = _context.BookCategories.Where(bc => bc.CategoryId == id);
             _context.BookCategories.RemoveRange(bookCategories);
 
-            // Remove the category
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 

@@ -86,7 +86,7 @@ namespace BookWyrmAPI2.Controllers
                 if (updatedCategory == null)
                     return NotFound($"Category with id {id} not found");
 
-                return NoContent(); // return 204 No Content for successful update
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -105,7 +105,7 @@ namespace BookWyrmAPI2.Controllers
                 if (deletedCategory == null)
                     return NotFound($"Category with id {id} not found");
 
-                return NoContent(); // return 204 No Content for successful delete
+                return NoContent();
             }
             catch (Exception ex)
             {

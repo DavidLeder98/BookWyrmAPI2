@@ -9,7 +9,7 @@ namespace BookWyrmAPI2.Services
         {
             var errors = new List<IdentityError>();
 
-            // Check username length
+            // Checks username length
             if (user.UserName.Length > 20)
             {
                 errors.Add(new IdentityError

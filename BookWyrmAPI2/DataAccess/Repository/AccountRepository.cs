@@ -48,10 +48,10 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
-            var user = await _userManager.FindByNameAsync(username); // Use FindByNameAsync with username
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
-                return null; // Handle the user-not-found case
+                return null;
             }
 
             return new UserProfileDto
@@ -73,7 +73,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             return await _userManager.FindByNameAsync(username);
         }
 
-        // Update user profile using UserProfileDto
         public async Task<IdentityResult> UpdateUserProfileAsync(string username, UserProfileDto userProfileDto)
         {
             var user = await FindUserByUsernameAsync(username);
@@ -82,7 +81,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 return IdentityResult.Failed(new IdentityError { Description = "User not found." });
             }
 
-            // Update properties only if they are provided in the DTO
             if (userProfileDto.FirstName != null) user.FirstName = userProfileDto.FirstName;
             if (userProfileDto.LastName != null) user.LastName = userProfileDto.LastName;
             if (userProfileDto.TelNumber != null) user.TelNumber = userProfileDto.TelNumber;
@@ -91,7 +89,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             if (userProfileDto.State != null) user.State = userProfileDto.State;
             if (userProfileDto.ZipCode != null) user.ZipCode = userProfileDto.ZipCode;
 
-            // Save changes
             return await _userManager.UpdateAsync(user);
         }
 
@@ -100,10 +97,10 @@ namespace BookWyrmAPI2.DataAccess.Repository
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
-                return new List<int>(); // Return an empty list if the user does not exist
+                return new List<int>();
             }
 
-            return user.BookIds ?? new List<int>(); // Return the BookIds or an empty list if null
+            return user.BookIds ?? new List<int>();
         }
 
         public async Task<IdentityResult> UpdateBooksInCartAsync(string username, List<int> bookIds)
@@ -114,8 +111,8 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 return IdentityResult.Failed(new IdentityError { Description = "User not found." });
             }
 
-            user.BookIds = bookIds; // Update the BookIds
-            return await _userManager.UpdateAsync(user); // Save changes
+            user.BookIds = bookIds;
+            return await _userManager.UpdateAsync(user);
         }
     }
 }

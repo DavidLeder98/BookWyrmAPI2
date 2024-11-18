@@ -24,10 +24,10 @@ namespace BookWyrmAPI2.DataAccess.Repository
                     Name = author.Name
                 });
 
-            // Apply search filtering if a searchTerm is provided
+            // applies search filtering if a searchTerm is provided
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                searchTerm = searchTerm.ToLower(); // make search case-insensitive
+                searchTerm = searchTerm.ToLower(); // makes search case-insensitive
                 authorsQuery = authorsQuery.Where(author =>
                     author.Name.ToLower().Contains(searchTerm));
             }
@@ -39,7 +39,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<AuthorWithBooksDto> GetAuthorByIdAsync(int id, SortBy sortBy)
         {
-            var baseUrl = "https://localhost:7230";
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
 
             var author = await _context.Authors
                 .Include(a => a.Books)
@@ -94,7 +94,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<Author> UpdateAuthorAsync(AuthorUpdateDto authorUpdateDto)
         {
-            if (authorUpdateDto.Id <= 0) return null; // Validate ID
+            if (authorUpdateDto.Id <= 0) return null; // validates ID
 
             var existingAuthor = await _context.Authors.FindAsync(authorUpdateDto.Id);
             if (existingAuthor == null) return null;
@@ -111,36 +111,34 @@ namespace BookWyrmAPI2.DataAccess.Repository
         public async Task<Author> DeleteAuthorAsync(int id)
         {
             var author = await _context.Authors
-                .Include(a => a.Books) // Include the related books
+                .Include(a => a.Books)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (author == null) return null;
 
-            // Set the AuthorId of the associated books to null
+            // sets the AuthorId of the associated books to null
             var books = await _context.Books
                 .Where(b => b.AuthorId == id)
                 .ToListAsync();
 
             foreach (var book in books)
             {
-                book.AuthorId = null; // Set AuthorId to null
+                book.AuthorId = null;
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Update the books in the context
                 _context.Books.UpdateRange(books);
 
-                // Remove the author
                 _context.Authors.Remove(author);
                 await _context.SaveChangesAsync();
 
-                await transaction.CommitAsync(); // Commit transaction
+                await transaction.CommitAsync();
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync(); // Rollback in case of error
+                await transaction.RollbackAsync(); // rollback in case of error
                 throw;
             }
 

@@ -40,7 +40,6 @@ namespace BookWyrmAPI2.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception if necessary
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -55,14 +54,13 @@ namespace BookWyrmAPI2.Controllers
                 var result = await _accountRepository.LoginAsync(model);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.Username); // Assuming you have access to _userManager
-                    var roles = await _userManager.GetRolesAsync(user); // Get user roles
+                    var user = await _userManager.FindByNameAsync(model.Username);
+                    var roles = await _userManager.GetRolesAsync(user);
 
-                    // Return a response including the role
                     return Ok(new
                     {
                         Message = "Login successful",
-                        Role = roles.FirstOrDefault() // Get the first role or null if none
+                        Role = roles.FirstOrDefault() // Gets the first role or null if none
                     });
                 }
 
@@ -70,7 +68,6 @@ namespace BookWyrmAPI2.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception if necessary
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -86,7 +83,6 @@ namespace BookWyrmAPI2.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception if necessary
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -106,7 +102,6 @@ namespace BookWyrmAPI2.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception if necessary
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -116,14 +111,12 @@ namespace BookWyrmAPI2.Controllers
         {
             try
             {
-                // Use the repository method to find the user by username
                 var user = await _accountRepository.FindUserByUsernameAsync(username);
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                // Call the repository method to update the user profile
                 var result = await _accountRepository.UpdateUserProfileAsync(username, userProfileDto);
                 if (!result.Succeeded)
                 {
@@ -144,17 +137,17 @@ namespace BookWyrmAPI2.Controllers
         {
             try
             {
-                var bookIds = await _accountRepository.GetBooksInCartAsync(username); // Call your method to get book IDs
-                if (bookIds == null || !bookIds.Any()) // Check if the list is null or empty
+                var bookIds = await _accountRepository.GetBooksInCartAsync(username);
+                if (bookIds == null || !bookIds.Any())
                 {
-                    return NotFound(); // Return 404 if no book IDs are found
+                    return NotFound();
                 }
 
-                return Ok(bookIds); // Return the list of book IDs with a 200 OK status
+                return Ok(bookIds);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}"); // Return 500 on error
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -163,7 +156,7 @@ namespace BookWyrmAPI2.Controllers
         {
             if (bookIds == null)
             {
-                return BadRequest("Book IDs list is null."); // Handle null input
+                return BadRequest("Book IDs list is null.");
             }
 
             try
@@ -171,14 +164,14 @@ namespace BookWyrmAPI2.Controllers
                 var result = await _accountRepository.UpdateBooksInCartAsync(username, bookIds);
                 if (result.Succeeded)
                 {
-                    return NoContent(); // Return 204 No Content on success
+                    return NoContent();
                 }
 
-                return BadRequest(result.Errors); // Return errors if failed
+                return BadRequest(result.Errors);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}"); // Handle exception
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

@@ -2,6 +2,7 @@
 using BookWyrmAPI2.DataAccess.Repository;
 using BookWyrmAPI2.Models.BaseModels;
 using BookWyrmAPI2.Models.DTOs.AuthorDTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static BookWyrmAPI2.DataAccess.Repository.BookRepository;
 
@@ -72,12 +73,11 @@ namespace BookWyrmAPI2.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState); // Return 400 if the model is invalid
+                    return BadRequest(ModelState);
                 }
 
                 var createdAuthor = await _authorRepository.CreateAuthorAsync(authorCreateDto);
 
-                // Return 201 Created with the created author data
                 return CreatedAtAction(nameof(GetAuthorById), new { id = createdAuthor.Id }, createdAuthor);
             }
             catch (Exception ex)
@@ -96,14 +96,14 @@ namespace BookWyrmAPI2.Controllers
             {
                 if (id != authorUpdateDto.Id || !ModelState.IsValid)
                 {
-                    return BadRequest(); // Return 400 if the ID mismatch or model is invalid
+                    return BadRequest();
                 }
 
                 var updatedAuthor = await _authorRepository.UpdateAuthorAsync(authorUpdateDto);
 
                 if (updatedAuthor == null)
                 {
-                    return NotFound(); // Return 404 if the author was not found
+                    return NotFound();
                 }
 
                 return Ok(new { message = "Author updated successfully." });
@@ -126,7 +126,7 @@ namespace BookWyrmAPI2.Controllers
 
                 if (deletedAuthor == null)
                 {
-                    return NotFound(); // Return 404 if the author was not found
+                    return NotFound();
                 }
 
                 return Ok(new { message = "Author deleted successfully." });

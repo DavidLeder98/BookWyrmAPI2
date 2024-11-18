@@ -34,40 +34,40 @@ namespace BookWyrmAPI2
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IBundleRepository, BundleRepository>();
 
-            // Configure logging
+            // logging
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
             builder.Logging.AddDebug();
 
             // ------------------------------------------------ IDENTITY ------------------------------------------------
 
-            // Add Identity with default cookie-based authentication
+            // Adds Identity with default cookie-based authentication
             builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 6;
 
-                // Set user name validation rules
+                // Sets user name validation rules
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._";
-                options.User.RequireUniqueEmail = false; // Set to true if you want unique emails
+                options.User.RequireUniqueEmail = false;
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders(); // Handles cookie authentication
 
-            // Ensure you have RoleManager<IdentityRole> registered
+            // Ensures you have RoleManager<IdentityRole> registered
             builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
-            // Configure cookie settings (optional adjustments)
+            // Configures cookie settings
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Adjust timeout
-                options.LoginPath = "/api/account/login";          // Path for login
-                options.AccessDeniedPath = "/api/account/accessdenied";  // Path for access denied
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/api/account/login";
+                options.AccessDeniedPath = "/api/account/accessdenied";
                 options.SlidingExpiration = true;
             });
 
-            // Add custom user validation for username length
+            // Adds custom user validation for username length
             builder.Services.AddScoped<IUserValidator<AppUser>, CustomUserValidator>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
@@ -83,11 +83,15 @@ namespace BookWyrmAPI2
                 options.AddPolicy("AllowFrontend",
                     corsBuilder =>
                     {
-                        // Allow requests from your local front-end
-                        corsBuilder.WithOrigins("http://localhost:5173")  // Allow your local development server to access the API
-                                   .AllowAnyHeader()
-                                   .AllowAnyMethod()
-                                   .AllowCredentials();  // Allow credentials (cookies) if needed
+                        corsBuilder.WithOrigins(
+                                "https://bwfe-vercel.vercel.app",
+                                "https://bookwyrm.store",
+                                "https://www.bookwyrm.store",
+                                "http://localhost:7230"
+                            )
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();  // Allow credentials (cookies)
                     });
             });
 
@@ -96,7 +100,7 @@ namespace BookWyrmAPI2
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            // Configure the HTTP request pipeline.
+            // Configures the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

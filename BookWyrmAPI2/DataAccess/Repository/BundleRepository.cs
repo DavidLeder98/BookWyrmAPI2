@@ -84,7 +84,7 @@ namespace BookWyrmAPI2.DataAccess.Repository
             _context.Bundles.Add(bundle);
             await _context.SaveChangesAsync();
 
-            // Link books to the bundle
+            // Links books to the bundle
             if (bundleCreateDto.BookIds.Any())
             {
                 var bookBundles = bundleCreateDto.BookIds.Select(bookId => new BookBundle
@@ -106,20 +106,17 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
             bundle.Name = bundleUpdateDto.Name;
 
-            // Update the bundle in the database
             _context.Bundles.Update(bundle);
             await _context.SaveChangesAsync();
 
-            // Update linked books
+            // Updates linked books
             var existingBooks = await _context.BookBundles
                 .Where(bb => bb.BundleId == bundle.Id)
                 .ToListAsync();
 
-            // Remove existing BookBundles
             _context.BookBundles.RemoveRange(existingBooks);
             await _context.SaveChangesAsync();
 
-            // Add the new BookBundles
             if (bundleUpdateDto.BookIds.Any())
             {
                 var bookBundles = bundleUpdateDto.BookIds.Select(bookId => new BookBundle
@@ -139,11 +136,10 @@ namespace BookWyrmAPI2.DataAccess.Repository
             var bundle = await _context.Bundles.Include(b => b.BookBundles).FirstOrDefaultAsync(b => b.Id == id);
             if (bundle == null) return null;
 
-            // Remove any associated BookBundles
+            // Removes any associated BookBundles
             var bookBundles = _context.BookBundles.Where(bb => bb.BundleId == id);
             _context.BookBundles.RemoveRange(bookBundles);
 
-            // Remove the bundle
             _context.Bundles.Remove(bundle);
             await _context.SaveChangesAsync();
 

@@ -47,21 +47,21 @@ namespace BookWyrmAPI2.DataAccess.Repository
             var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
             var query = _context.Books.Include(b => b.Author).AsQueryable();
 
-            // Split the searchTerm into individual words
+            // splits the searchTerm into individual words
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 var searchTerms = searchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                // Ensure that all terms are present in either the book title or the author's name
+                // ensures that all terms are present in either the book title or the author's name
                 foreach (var term in searchTerms)
                 {
-                    var lowerTerm = term.ToLower(); // Convert the term to lowercase for case-insensitive search
+                    var lowerTerm = term.ToLower();
                     query = query.Where(b => b.Title.ToLower().Contains(lowerTerm) ||
                                              b.Author.Name.ToLower().Contains(lowerTerm));
                 }
             }
 
-            // Select the necessary fields for BookCardDto
+            // selects the necessary fields for BookCardDto
             var books = await query.Select(b => new BookCardDto
             {
                 Id = b.Id,
@@ -74,7 +74,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 AuthorName = b.Author.Name
             }).ToListAsync();
 
-            // Apply sorting based on the SortBy parameter
             return sortBy switch
             {
                 SortBy.PriceAscending => books.OrderBy(b => b.Price),
@@ -87,9 +86,9 @@ namespace BookWyrmAPI2.DataAccess.Repository
 
         public async Task<BookCardDto> GetBookCardByIdAsync(int id)
         {
-            var baseUrl = "https://bookwyrmapi2.azurewebsites.net"; // Ensure this is consistent with your other methods
+            var baseUrl = "https://bookwyrmapi2.azurewebsites.net";
             var book = await _context.Books
-                .Include(b => b.Author) // Include author details
+                .Include(b => b.Author)
                 .Where(b => b.Id == id)
                 .Select(b => new BookCardDto
                 {
@@ -102,9 +101,9 @@ namespace BookWyrmAPI2.DataAccess.Repository
                     ImageUrl = $"{baseUrl}{b.ImageUrl}",
                     AuthorName = b.Author.Name
                 })
-                .FirstOrDefaultAsync(); // Use FirstOrDefaultAsync to get a single item
+                .FirstOrDefaultAsync();
 
-            return book; // This will be null if no book is found with the given ID
+            return book;
         }
 
         public async Task<BookDetailsDto> GetBookByIdAsync(int id)
@@ -150,23 +149,20 @@ namespace BookWyrmAPI2.DataAccess.Repository
                 AuthorId = bookCreateDto.AuthorId
             };
 
-            // Handle image uploads
             if (bookCreateDto.ImageFile != null)
             {
-                // Save small image to wwwroot/uploads/books
                 book.ImageUrl = await SaveImageAsync(bookCreateDto.ImageFile);
             }
 
             if (bookCreateDto.LargeImageFile != null)
             {
-                // Save large image to wwwroot/uploads/largebooks
                 book.LargeImageUrl = await SaveLargeImageAsync(bookCreateDto.LargeImageFile);
             }
 
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            // Link categories
+            // links to categories
             if (bookCreateDto.CategoryIds.Any())
             {
                 var bookCategories = bookCreateDto.CategoryIds.Select(catId => new BookCategory
@@ -186,7 +182,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             var book = await _context.Books.FindAsync(bookUpdateDto.Id);
             if (book == null) return null;
 
-            // Update book properties
             book.Title = bookUpdateDto.Title;
             book.Description = bookUpdateDto.Description;
             book.Rating = bookUpdateDto.Rating;
@@ -195,7 +190,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             book.Price = bookUpdateDto.Price;
             book.AuthorId = bookUpdateDto.AuthorId;
 
-            // Handle image upload if files are provided
             if (bookUpdateDto.ImageFile != null)
             {
                 book.ImageUrl = await SaveImageAsync(bookUpdateDto.ImageFile);
@@ -209,7 +203,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             _context.Books.Update(book);
             await _context.SaveChangesAsync();
 
-            // Update categories
             var existingCategories = await _context.BookCategories
                 .Where(bc => bc.BookId == book.Id)
                 .ToListAsync();
@@ -269,8 +262,6 @@ namespace BookWyrmAPI2.DataAccess.Repository
             }
             catch (Exception ex)
             {
-                // Log the exception
-                // You can use a logging framework here
                 Console.WriteLine($"Error saving image: {ex.Message}");
                 throw; // Re-throwing can be useful for higher-level error handling
             }
@@ -282,12 +273,11 @@ namespace BookWyrmAPI2.DataAccess.Repository
         {
             if (imageFile == null || imageFile.Length == 0) return null;
 
-            // Define the directory to save large images
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/largebooks");
-            var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName); // Generate a unique file name
+            var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName); // Generates a unique file name
             var filePath = Path.Combine(uploadsFolder, fileName);
 
-            // Ensure the uploads folder exists
+            // Ensures the uploads folder exists
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -303,11 +293,11 @@ namespace BookWyrmAPI2.DataAccess.Repository
             }
             catch (Exception ex)
             {
-                // Log the exception
+                // Logs the exception
                 throw new Exception("Could not save large image.", ex);
             }
 
-            // Return the URL of the saved large image
+            // Returns the URL of the saved large image
             return $"/uploads/largebooks/{fileName}";
         }
     }
